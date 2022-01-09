@@ -29,6 +29,12 @@ export default function Home() {
     // TODO: setCanBuy
     // check if we have access
     // using accounts[0] and the contract
+    if (accounts.length > 0) {
+      contract.methods.hasAccess().call({ from: accounts[0] })
+        .then(setHasAccess)
+    } else {
+      setHasAccess(false)
+    }
   }
 
   const fetchCanBuy = async function () {
@@ -40,6 +46,7 @@ export default function Home() {
 
     contract.methods.totalSales().call()
       .then(setTotalSales)
+
   }
 
   const buy = async function () {
@@ -52,11 +59,14 @@ export default function Home() {
           from: accounts[0],
           value: web3.utils.toWei("0.01", "ether")
         })
+
+        checkAccess()
+        fetchCanBuy()
       } catch (e) {
         alert(e)
       }
     } else {
-      alert("you need to log in!")
+      alert("you need to log in!!!!")
     }
   }
 
@@ -73,7 +83,7 @@ export default function Home() {
     
         const json = await r.json()
 
-        // window.location.href = json.url
+        window.location.href = json.url
       } catch (e) {
         alert("incorrect download url")
       }
@@ -91,6 +101,7 @@ export default function Home() {
 
     window.ethereum
       .on("accountsChanged", setAccounts)
+
   }, [])
 
   useEffect(() => {

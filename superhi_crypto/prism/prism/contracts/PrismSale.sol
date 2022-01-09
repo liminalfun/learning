@@ -2,42 +2,43 @@
 pragma solidity >=0.4.22 <0.9.0;
 
 contract PrismSale {
-    uint256 public totalSales;
-    uint256 public maxSales;
 
-    address public owner;
-    address public charity;
+  uint public totalSales;
+  uint public maxSales;
 
-    mapping(address => bool) sales;
+  address public owner;
+  address public charity;
 
-    constructor() {
-        totalSales = 0;
-        maxSales = 100;
+mapping (address => bool) sales;
 
-        owner = 0x4501Cf7a6005A10c9eA98524b23937406081d436;
-        charity = 0x16248e6838EE9Bd1fa7B3D4D557313bfa66F2141;
-    }
+  constructor() {
+    totalSales = 0;
+    maxSales = 100;
 
-    function canBuy() public view returns (bool) {
-        return totalSales < maxSales;
-    }
+    owner = msg.sender;
+    charity = 0x095f1fD53A56C01c76A2a56B7273995Ce915d8C4;
+  }
 
-    function hasAccess() public view returns (bool) {
-        return sales[msg.sender];
-    }
+  function canBuy () public view returns (bool) {
+    return totalSales < maxSales;
+  }
 
-    function buy() public payable returns (bool) {
-        require(canBuy() == true, "can't buy this");
-        require(msg.value == 0.01 ether, "you didn't send the correct amount");
-        require(hasAccess() == false, "already bought");
+  function hasAccess () public view returns (bool) {
+    return sales[msg.sender];
+  }
 
-        payable(owner).transfer((msg.value * 80) / 100);
-        payable(charity).transfer((msg.value * 20) / 100);
+  function buy () public payable returns (bool) {
+    require(canBuy() == true, "can't buy this");
+    require(msg.value == 0.01 ether, "you didn't send the correct amount");
+    require(hasAccess() == false, "already bought");
 
-        totalSales = totalSales + 1;
+    payable(owner).transfer(msg.value * 80 / 100);
+    payable(charity).transfer(msg.value * 20 / 100);
 
-        sales[msg.sender] = true;
+    totalSales = totalSales + 1;
 
-        return true;
-    }
+    sales[msg.sender] = true;
+
+    return true;
+  }
 }
